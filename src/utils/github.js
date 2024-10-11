@@ -121,4 +121,5 @@ async function fetchAndFilterEvents() {
             break;
 //        }
     }
+}
 // This is the sentence to change the .js
