@@ -119,7 +119,7 @@ async function fetchAndFilterEvents() {
 //            const additionalEvents = await fetchAllEvents();
 //            allEvents = additionalEvents.concat(allEvents);
 //        } else {
-           
+               break;
 //        }
     }
 }
