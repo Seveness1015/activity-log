@@ -30469,7 +30469,7 @@ async function fetchAndFilterEvents() {
 //            const additionalEvents = await fetchAllEvents();
 //            allEvents = additionalEvents.concat(allEvents);
 //        } else {
-           
+               break;
 //        }
     }
 }
@@ -32385,7 +32385,7 @@ var __webpack_exports__ = {};
 const { fetchAndFilterEvents } = __nccwpck_require__(3905);
 const { updateReadme } = __nccwpck_require__(9204);
 const { username, token, eventLimit, ignoreEvents, readmePath, commitMessage } = __nccwpck_require__(9530);
-const core = __nccwpck_require__(9619);
+const core = __nccwpck_require__(9619)
 
 // Main function to execute the update process
 async function main() {
@@ -32394,7 +32394,7 @@ async function main() {
         await updateReadme(activity, readmePath);
     } catch (error) {
         core.setFailed(`❌ Error in the update process: ${error.message}`);
-        console.error(error);
+        console.error(error)
         process.exit(1);
     }
 }
