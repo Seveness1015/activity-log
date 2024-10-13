@@ -30346,7 +30346,7 @@ module.exports = {
 /***/ }),
 
 /***/ 3905:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const github = __nccwpck_require__(2335);
 const core = __nccwpck_require__(9619);
@@ -30465,15 +30465,56 @@ async function fetchAndFilterEvents() {
             .slice(0, eventLimit);
         break;
 
-//        if (filteredEvents.length < eventLimit) {
-//            const additionalEvents = await fetchAllEvents();
-//            allEvents = additionalEvents.concat(allEvents);
-//        } else {
-               break;
-//        }
+        // if (filteredEvents.length < eventLimit) {
+        //     const additionalEvents = await fetchAllEvents();
+        //     allEvents = additionalEvents.concat(allEvents);
+        // } else {
+        //     break;
+        // }
     }
+
+    filteredEvents = filteredEvents.slice(0, eventLimit);
+
+    const fetchedEventCount = filteredEvents.length;
+    const totalFetchedEvents = allEvents.length;
+
+    if (fetchedEventCount < eventLimit) {
+        core.warning(`⚠️ Only ${fetchedEventCount} events met the criteria. ${totalFetchedEvents - fetchedEventCount} events were skipped due to filters.`);
+    }
+
+    // Generate ordered list of events with descriptions
+    const listItems = filteredEvents.map((event, index) => {
+        const type = event.type;
+        const repo = event.repo;
+        const isPrivate = !event.public;
+        const action = event.payload.pull_request
+            ? (event.payload.pull_request.merged ? 'merged' : event.payload.action)
+            : event.payload.action;
+
+        const pr = event.payload.pull_request || {};
+        const payload = event.payload;
+
+        const description = eventDescriptions[type]
+            ? (typeof eventDescriptions[type] === 'function'
+                ? eventDescriptions[type]({ repo, isPrivate, pr, payload })
+                : (eventDescriptions[type][action]
+                    ? eventDescriptions[type][action]({ repo, pr, isPrivate, payload })
+                    : core.warning(`Unknown action: ${action}`)))
+            : core.warning(`Unknown event: ${event}`);
+
+        return style === 'MARKDOWN'
+            ? `${index + 1}. ${description}`
+            : `<li>${encodeHTML(description)}</li>`;
+    });
+
+    return style === 'MARKDOWN'
+        ? listItems.join('\n')
+        : `<ol>\n${listItems.join('\n')}\n</ol>`;
 }
-// This is the sentence to change the .js
+
+module.exports = {
+    fetchAndFilterEvents,
+};
 
 
 /***/ }),
